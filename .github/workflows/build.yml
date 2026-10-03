@@ -1,0 +1,22 @@
+name: Build PlanXY Portable
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.5.0'
+      - name: Build Project
+        run: |
+          qmake
+          nmake
+      - name: Upload Executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: PlanXY-Portable
+          path: 'release/*.exe'
