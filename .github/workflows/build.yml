@@ -19,14 +19,24 @@ jobs:
           target: 'desktop'
           arch: 'win64_msvc2019_64'
 
-      - name: Build with CMake or QMake
+      - name: Build Project
         run: |
           if (Test-Path "CMakeLists.txt") {
             cmake -B build -DCMAKE_PREFIX_PATH=$env:QTDIR
             cmake --build build --config Release
           } else {
-            qmake
-            nmake
+            $proFile = Get-ChildItem -Filter "*.pro" -Recurse | Select-Object -First 1
+            if ($proFile) {
+              Set-Location $proFile.DirectoryName
+              qmake $proFile.Name
+              nmake
+            } else {
+              qmake -project
+              $proCreated = Get-ChildItem -Filter "*.pro" | Select-Object -First 1
+              Add-Content -Path $proCreated.FullName -Value "QT += widgets core gui"
+              qmake $proCreated.Name
+              nmake
+            }
           }
 
       - name: Upload Executable
