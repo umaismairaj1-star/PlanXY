@@ -19,12 +19,22 @@ jobs:
           target: 'desktop'
           arch: 'win64_msvc2019_64'
 
-      - name: Build Project
+      - name: Build with CMake or QMake
         run: |
-          qmake
-          nmake
+          if (Test-Path "CMakeLists.txt") {
+            cmake -B build -DCMAKE_PREFIX_PATH=$env:QTDIR
+            cmake --build build --config Release
+          } else {
+            qmake
+            nmake
+          }
 
       - name: Upload Executable
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PlanXY-Portable
+          path: '**/*.exe'
         uses: actions/upload-artifact@v4
         with:
           name: PlanXY-Portable
