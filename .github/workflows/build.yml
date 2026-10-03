@@ -35,7 +35,3 @@ jobs:
         with:
           name: PlanXY-Portable
           path: '**/*.exe'
-        uses: actions/upload-artifact@v4
-        with:
-          name: PlanXY-Portable
-          path: '**/*.exe'
